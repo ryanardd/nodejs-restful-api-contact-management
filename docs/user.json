@@ -1,0 +1,387 @@
+{
+    "openapi": "3.0.2",
+    "servers": [
+        {
+            "url": "https://api.example.com/v1"
+        }
+    ],
+    "info": {
+        "title": "Contact Management API",
+        "version": "1.0",
+        "description": "OpenAPI for Contact Management RESTful API"
+    },
+    "components": {
+        "securitySchemes": {
+            "contactAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Contact"
+            }
+        }
+    },
+    "paths": {
+        "/api/users": {
+            "post": {
+                "security": [
+                    {
+                        "contactAuth": []
+                    }
+                ],
+                "summary": "Register users",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "bejo": {
+                                    "value": {
+                                        "username": "Bejo",
+                                        "password": "abc1234",
+                                        "name": "bejo"
+                                    }
+                                }
+                            },
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "required": true
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "minLength": 4,
+                                        "required": true
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "required": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Register Success",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "bejo": {
+                                        "value": {
+                                            "username": "Bejo",
+                                            "name": "bejo"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "username": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Register Failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "errors": {
+                                        "value": {
+                                            "errors": "Username Already Register"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/login": {
+            "post": {
+                "summary": "Login Users",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "bejo": {
+                                    "value": {
+                                        "username": "Bejo",
+                                        "password": "abc1234"
+                                    }
+                                }
+                            },
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "required": true
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "minLength": 4,
+                                        "required": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login Success",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "token": {
+                                        "value": {
+                                            "token": "unique-id"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "token": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Login Failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "errors": {
+                                        "value": {
+                                            "errors": "Username or Password Wrong"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/update": {
+            "patch": {
+                "summary": "Update Users",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "bejo": {
+                                    "value": {
+                                        "name": "bejo //optional",
+                                        "username": "Bejo //optional"
+                                    }
+                                }
+                            },
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "minLength": 3
+                                    },
+                                    "username": {
+                                        "type": "string",
+                                        "minLength": 3
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "UPdate Success",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "token": {
+                                        "value": {
+                                            "name": "bejo",
+                                            "username": "Bejoo"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "username": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Update Failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "errors": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "errors": {
+                                        "value": {
+                                            "errors": "Name or Username min Length 3"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/current": {
+            "get": {
+                "summary": "Get All users",
+                "responses": {
+                    "200": {
+                        "description": "Get Data Success",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "token": {
+                                        "value": {
+                                            "username": "Bejo",
+                                            "name": "bejo"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "username": {
+                                            "type": "string"
+                                        },
+                                        "name": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Get Data Failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "errors": {
+                                        "value": {
+                                            "errors": "Unauthorized"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/logout": {
+            "delete": {
+                "summary": "Logout User",
+                "responses": {
+                    "200": {
+                        "description": "Logout Success",
+                        "content": {
+                            "application/json": {
+                                "examples": {
+                                    "success": {
+                                        "value": {
+                                            "data": "true"
+                                        }
+                                    }
+                                },
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Logout Failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "errors": {
+                                        "value": {
+                                            "errors": "Unauthorized"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

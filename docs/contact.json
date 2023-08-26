@@ -1,0 +1,175 @@
+{
+    "openapi": "3.0.2",
+    "servers": [
+        {
+            "url": "https://api.example.com/v1"
+        }
+    ],
+    "info": {
+        "title": "Contact API",
+        "version": "1.0"
+    },
+    "components": {
+        "securitySchemes": {
+            "contactAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Contact"
+            }
+        }
+    },
+    "paths": {
+        "/api/contact": {
+            "post": {
+                "security": [
+                    {
+                        "contactAuth": []
+                    }
+                ],
+                "summary": "Create contact API",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "first_name": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "required": true
+                                    },
+                                    "last_name": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "required": true
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "required": true
+                                    },
+                                    "phone": {
+                                        "type": "integer",
+                                        "minLength": 3,
+                                        "required": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "minLength": 1
+                                        },
+                                        "first_name": {
+                                            "type": "string",
+                                            "minLength": 3,
+                                            "required": true
+                                        },
+                                        "last_name": {
+                                            "type": "string",
+                                            "minLength": 3,
+                                            "required": true
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "minLength": 3,
+                                            "required": true
+                                        },
+                                        "phone": {
+                                            "type": "integer",
+                                            "minLength": 3,
+                                            "required": true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/contact/:id": {
+            "patch": {
+                "security": [
+                    {
+                        "contactAuth": []
+                    }
+                ],
+                "summary": "Update data Contact",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "first_name": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "required": true
+                                    },
+                                    "last_name": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "required": true
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "required": true
+                                    },
+                                    "phone": {
+                                        "type": "integer",
+                                        "minLength": 3,
+                                        "required": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/contacts/:id": {
+            "get": {
+                "security": [
+                    {
+                        "contactAuth": []
+                    }
+                ],
+                "summary": "Get all data contacts",
+                "responses": {}
+            }
+        },
+        "/api/contacts": {
+            "get": {
+                "security": [
+                    {
+                        "contactAuth": []
+                    }
+                ],
+                "summary": "Search data",
+                "responses": {}
+            }
+        },
+        "/api/contact/delete/:id": {
+            "delete": {
+                "security": [
+                    {
+                        "contactAuth": []
+                    }
+                ],
+                "responses": {}
+            }
+        }
+    }
+}

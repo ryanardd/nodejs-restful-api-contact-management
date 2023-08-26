@@ -1,0 +1,191 @@
+{
+    "openapi": "3.0.2",
+    "servers": [
+        {
+            "url": "https://api.example.com/v1"
+        }
+    ],
+    "info": {
+        "title": "Contact API",
+        "version": "1.0"
+    },
+    "components": {
+        "securitySchemes": {
+            "contactAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "X-API-Contact"
+            }
+        }
+    },
+    "paths": {
+        "/api/contact/:id/addresses": {
+            "post": {
+                "security": [
+                    {
+                        "contactAuth": []
+                    }
+                ],
+                "summary": "Create Address API",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "street": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "required": true
+                                    },
+                                    "city": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "required": true
+                                    },
+                                    "prov": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "required": true
+                                    },
+                                    "country": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "required": true
+                                    },
+                                    "zipCode": {
+                                        "type": "integer",
+                                        "minLength": 3,
+                                        "required": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "minLength": 1
+                                        },
+                                        "street": {
+                                            "type": "string",
+                                            "minLength": 3,
+                                            "required": true
+                                        },
+                                        "city": {
+                                            "type": "string",
+                                            "minLength": 3,
+                                            "required": true
+                                        },
+                                        "prov": {
+                                            "type": "string",
+                                            "minLength": 3,
+                                            "required": true
+                                        },
+                                        "country": {
+                                            "type": "string",
+                                            "minLength": 3,
+                                            "required": true
+                                        },
+                                        "zipCode": {
+                                            "type": "integer",
+                                            "minLength": 3,
+                                            "required": true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/contact/:contactId/addresses/:addressId": {
+            "patch": {
+                "security": [
+                    {
+                        "contactAuth": []
+                    }
+                ],
+                "summary": "Update Address API",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "street": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "required": true
+                                    },
+                                    "city": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "required": true
+                                    },
+                                    "prov": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "required": true
+                                    },
+                                    "country": {
+                                        "type": "string",
+                                        "minLength": 3,
+                                        "required": true
+                                    },
+                                    "zipCode": {
+                                        "type": "integer",
+                                        "minLength": 3,
+                                        "required": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/contacts/:contactId/addresses/:addressId": {
+            "get": {
+                "security": [
+                    {
+                        "contactAuth": []
+                    }
+                ],
+                "summary": "Get Address API",
+                "responses": {}
+            }
+        },
+        "/api/contacts/:contactId/address": {
+            "get": {
+                "security": [
+                    {
+                        "contactAuth": []
+                    }
+                ],
+                "summary": "List Address API",
+                "responses": {}
+            }
+        },
+        "/api/contact/:contactId/address/:addressId": {
+            "delete": {
+                "security": [
+                    {
+                        "contactAuth": []
+                    }
+                ],
+                "summary": "Remove Address API",
+                "responses": {}
+            }
+        }
+    }
+}
