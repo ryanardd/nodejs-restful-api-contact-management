@@ -1,6 +1,6 @@
 import { prismaClient } from "../application/database";
 import { ResponseError } from "../error/response-error";
-import { getUserValidation, loginUserValidation, registerUserValidation } from "../validation/user-validation"
+import { getUserValidation, loginUserValidation, registerUserValidation, updateUserValidation } from "../validation/user-validation"
 import { validate } from "../validation/validation"
 import bcrypt from "bcrypt";
 import { v4 as uuid } from 'uuid';
@@ -109,8 +109,50 @@ const get = async (username) => {
 
 }
 
+const update = async (request) => {
+
+    // lakukan validation
+    const user = validate(updateUserValidation, request);
+
+    // cek adanya user dalam db
+    const userCount = await prismaClient.user.count({
+        where: {
+            username: user.username
+        }
+    });
+
+    // cek user jika tidak ada
+    if (userCount !== 1) {
+        throw new ResponseError(404, 'Username is not found');
+    }
+
+    // cek user jika ada
+    const data = {}
+    if (user.name) {
+        data.name = user.name
+    }
+
+    if (user.password) {
+        data.password = await bcrypt.hash(user.password, 10);
+    }
+
+    // lakukan update
+    return prismaClient.user.update({
+        where: {
+            username: user.username
+        },
+        data: data,
+        select: {
+            username: true,
+            name: true
+        }
+    });
+
+}
+
 export default {
     register,
     login,
-    get
+    get,
+    update
 }
