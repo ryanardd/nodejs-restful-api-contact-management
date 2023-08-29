@@ -1,7 +1,7 @@
 import supertest from "supertest";
 import { web } from "../src/application/web";
 import { logger } from "../src/application/logging";
-import { createTestUser, getUserTest, removeAllTestUser, removeTestUser } from "./test-util";
+import { createTestContact, createTestUser, getTestContact, getUserTest, removeAllTestContact, removeAllTestUser, removeTestUser } from "./test-util";
 import bcrypt from "bcrypt";
 
 describe('POST /api/users', () => {
@@ -265,7 +265,7 @@ describe('POST /api/contacts', () => {
     });
 
     afterEach(async () => {
-        await removeAllTestUser();
+        await removeAllTestContact();
         await removeTestUser();
     });
 
@@ -309,4 +309,49 @@ describe('POST /api/contacts', () => {
         expect(result.body.errors).toBeUndefined;
 
     });
+});
+
+describe('GET /api/contact/:contactId', () => {
+
+    beforeEach(async () => {
+        await createTestUser();
+        await createTestContact();
+    });
+
+    afterEach(async () => {
+        await removeAllTestContact();
+        await removeTestUser();
+    });
+
+    it('should can get contact', async () => {
+
+        const contactId = await getTestContact();
+
+        const result = await supertest(web)
+            .get('/api/contacts/' + contactId.id)
+            .set('Authorization', 'test')
+
+        logger.info(result);
+
+        expect(result.status).toBe(200);
+        expect(result.body.data.id).toBe(contactId.id);
+        expect(result.body.data.first_name).toBe(contactId.first_name);
+        expect(result.body.data.last_name).toBe(contactId.last_name);
+        expect(result.body.data.email).toBe(contactId.email);
+        expect(result.body.data.phone).toBe(contactId.phone);
+    });
+
+    it('should reject if get contact invalid', async () => {
+
+        const contactId = await getTestContact();
+
+        const result = await supertest(web)
+            .get('/api/contacts/' + (contactId.id + 1))
+            .set('Authorization', 'test')
+
+        logger.info(result);
+
+        expect(result.status).toBe(404);
+    });
+
 });

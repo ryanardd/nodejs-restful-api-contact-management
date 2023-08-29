@@ -17,6 +17,24 @@ const create = async (req, res, next) => {
     }
 }
 
+const get = async (req, res, next) => {
+    try {
+
+        // mendefinisikan user dan request berdasarkan dari method contact-service
+        const user = req.user // optional
+        const request = req.params.contactId
+
+        const result = await contactService.get(user, request);
+        res.status(200).json({
+            data: result
+        })
+
+    } catch (error) {
+        next(error);
+    }
+}
+
 export default {
-    create
+    create,
+    get
 }
