@@ -1,7 +1,7 @@
 import supertest from "supertest";
 import { web } from "../src/application/web";
 import { logger } from "../src/application/logging";
-import { createTestUser, getUserTest, removeTestUser } from "./test-util";
+import { createTestUser, getUserTest, removeAllTestUser, removeTestUser } from "./test-util";
 import bcrypt from "bcrypt";
 
 describe('POST /api/users', () => {
@@ -257,4 +257,56 @@ describe('DELETE /api/users/logout', () => {
         expect(result.status).toBe(401)
     });
 
+});
+
+describe('POST /api/contacts', () => {
+    beforeEach(async () => {
+        await createTestUser();
+    });
+
+    afterEach(async () => {
+        await removeAllTestUser();
+        await removeTestUser();
+    });
+
+    it('should can create contact', async () => {
+
+        const result = await supertest(web)
+            .post('/api/contacts')
+            .set('Authorization', 'test')
+            .send({
+                first_name: 'test',
+                last_name: 'test',
+                email: 'test@gmail.com',
+                phone: '08523232323',
+            })
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(200);
+        expect(result.body.data.first_name).toBe('test');
+        expect(result.body.data.last_name).toBe('test');
+        expect(result.body.data.email).toBe('test@gmail.com');
+        expect(result.body.data.phone).toBe('08523232323');
+
+    });
+
+    it('should reject if contact data invalid', async () => {
+
+        const result = await supertest(web)
+            .post('/api/contacts')
+            .set('Authorization', 'test')
+            .send({
+                first_name: '',
+                last_name: 'test',
+                email: 'test@gmail.com',
+                phone: '08523232323',
+            })
+
+        logger.info(result.body)
+
+        expect(result.status).toBe(400);
+        expect(result.body.errors).toBeUndefined;
+
+    });
 });
