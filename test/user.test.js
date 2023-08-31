@@ -355,3 +355,79 @@ describe('GET /api/contact/:contactId', () => {
     });
 
 });
+
+describe('PUT /api/contacts/:contactId', () => {
+
+    beforeEach(async () => {
+        await createTestUser();
+        await createTestContact();
+    });
+
+    afterEach(async () => {
+        await removeAllTestContact();
+        await removeTestUser();
+    });
+
+    it('should can update data contact', async () => {
+        // get data test
+        const testContact = await getTestContact();
+
+        const result = await supertest(web)
+            .put('/api/contacts/' + testContact.id)
+            .set('Authorization', 'test')
+            .send({
+                first_name: 'bejo',
+                last_name: "berbakti",
+                email: "bejo@gmail.com",
+                phone: '099999999'
+            });
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(200);
+        expect(result.body.data.id).toBe(testContact.id);
+        expect(result.body.data.first_name).toBe('bejo');
+        expect(result.body.data.last_name).toBe('berbakti');
+        expect(result.body.data.email).toBe('bejo@gmail.com');
+        expect(result.body.data.phone).toBe('099999999');
+    });
+
+    it('should reject if request invalid', async () => {
+        // get data test
+        const testContact = await getTestContact();
+
+        const result = await supertest(web)
+            .put('/api/contacts/' + testContact.id)
+            .set('Authorization', 'test')
+            .send({
+                first_name: '',
+                last_name: "",
+                email: "bejo",
+                phone: '099999999'
+            });
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(400);
+    });
+
+    it('should reject if data not found', async () => {
+        // get data test
+        const testContact = await getTestContact();
+
+        const result = await supertest(web)
+            .put('/api/contacts/' + (testContact.id + 1))
+            .set('Authorization', 'test')
+            .send({
+                first_name: 'bejo',
+                last_name: "berbakti",
+                email: "bejo@gmail.com",
+                phone: '099999999'
+            });
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(404);
+    });
+
+});

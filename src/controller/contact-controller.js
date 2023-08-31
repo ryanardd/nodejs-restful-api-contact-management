@@ -3,7 +3,7 @@ import contactService from "../service/contact-service";
 const create = async (req, res, next) => {
     try {
 
-        // mendefinisikan user dan request berdasarkan dari method contact-service
+        // mendefinisikan user dan request berdasarkan dari contact-service
         const user = req.user;
         const request = req.body;
 
@@ -20,9 +20,9 @@ const create = async (req, res, next) => {
 const get = async (req, res, next) => {
     try {
 
-        // mendefinisikan user dan request berdasarkan dari method contact-service
-        const user = req.user // optional
-        const request = req.params.contactId
+        // mendefinisikan user dan request berdasarkan dari contact-service
+        const user = req.user // optional // diambil dari middleware
+        const request = req.params.contactId // diambil dari params url
 
         const result = await contactService.get(user, request);
         res.status(200).json({
@@ -34,7 +34,29 @@ const get = async (req, res, next) => {
     }
 }
 
+const update = async (req, res, next) => {
+
+    try {
+
+        // mendefinisikan user dan request berdasarkan dari contact-service
+        const user = req.user; // diambil dari middleware
+        const contactId = req.params.contactId; // diambil dari params url
+        const request = req.body;
+        request.id = contactId;
+
+        const result = await contactService.update(user, request);
+        res.status(200).json({
+            data: result
+        })
+
+    } catch (error) {
+        next(error);
+    }
+
+}
+
 export default {
     create,
-    get
+    get,
+    update
 }

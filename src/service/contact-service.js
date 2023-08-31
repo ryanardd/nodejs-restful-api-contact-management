@@ -1,4 +1,4 @@
-import { createContactValidation, getContactValidation } from "../validation/contact-validation";
+import { createContactValidation, getContactValidation, updateContactValidation } from "../validation/contact-validation";
 import { validate } from "../validation/validation";
 import { prismaClient } from "../application/database";
 import { ResponseError } from "../error/response-error";
@@ -55,7 +55,48 @@ const get = async (user, contactId) => {
 
 }
 
+const update = async (user, request) => {
+
+    // lakukan validation
+    const contact = validate(updateContactValidation, request)
+
+    // cek data di db
+    const countContactInDatabase = await prismaClient.contact.count({
+        where: {
+            username_id: user.username,
+            id: contact.id
+        },
+    });
+
+    // jika tidak ada data
+    if (countContactInDatabase !== 1) {
+        throw new ResponseError(404, 'data is not found');
+    }
+
+    // jika ada maka kembalikan
+    return prismaClient.contact.update({
+        where: {
+            id: contact.id
+        },
+        data: {
+            first_name: contact.first_name,
+            last_name: contact.last_name,
+            email: contact.email,
+            phone: contact.phone
+        },
+        select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            email: true,
+            phone: true
+        }
+    })
+
+}
+
 export default {
     create,
-    get
+    get,
+    update
 }
