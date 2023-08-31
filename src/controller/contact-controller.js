@@ -55,8 +55,25 @@ const update = async (req, res, next) => {
 
 }
 
+const remove = async (req, res, next) => {
+
+    try {
+        const user = req.user // diambil dari middleware
+        const request = req.params.contactId // diambil dari params url
+
+        await contactService.remove(user, request);
+        res.status(200).json({
+            data: 'OK'
+        });
+    } catch (error) {
+        next(error);
+    }
+
+}
+
 export default {
     create,
     get,
-    update
+    update,
+    remove
 }

@@ -33,7 +33,7 @@ const get = async (user, contactId) => {
     // get contact data berdasarkan id yang tersedia di db
     const contact = await prismaClient.contact.findFirst({
         where: {
-            username_id: user.username_id, // foreign key
+            username_id: user.username, // foreign key
             id: contactId, // id berdasarkan request validate
         },
         select: {
@@ -95,8 +95,36 @@ const update = async (user, request) => {
 
 }
 
+const remove = async (user, request) => {
+
+    // lakukan validation
+    request = validate(getContactValidation, request);
+
+    // cek data di db
+    const countInDatabase = await prismaClient.contact.count({
+        where: {
+            username_id: user.username,
+            id: request
+        }
+    });
+
+    // jika tidak ada
+    if (countInDatabase !== 1) {
+        throw new ResponseError(404, 'contact is not found');
+    }
+
+    // jika ada maka kembalikan
+    return prismaClient.contact.delete({
+        where: {
+            id: request
+        }
+    })
+
+}
+
 export default {
     create,
     get,
-    update
+    update,
+    remove
 }
