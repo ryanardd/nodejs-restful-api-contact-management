@@ -86,7 +86,7 @@ const search = async (req, res, next) => {
         const result = await contactService.search(user, request);
         res.status(200).json({
             data: result.data,
-            pagging: result.pagging
+            paging: result.paging
         })
     } catch (error) {
         next(error)

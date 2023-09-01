@@ -496,9 +496,9 @@ describe('SEARCH /api/contacts', () => {
 
         expect(result.status).toBe(200);
         expect(result.body.data.length).toBe(10);
-        expect(result.body.pagging.page).toBe(1);
-        expect(result.body.pagging.total_page).toBe(2);
-        expect(result.body.pagging.total_item).toBe(15);
+        expect(result.body.paging.page).toBe(1);
+        expect(result.body.paging.total_page).toBe(2);
+        expect(result.body.paging.total_item).toBe(15);
 
     });
 
@@ -516,9 +516,9 @@ describe('SEARCH /api/contacts', () => {
 
         expect(result.status).toBe(200);
         expect(result.body.data.length).toBe(5);
-        expect(result.body.pagging.page).toBe(2);
-        expect(result.body.pagging.total_page).toBe(2);
-        expect(result.body.pagging.total_item).toBe(15);
+        expect(result.body.paging.page).toBe(2);
+        expect(result.body.paging.total_page).toBe(2);
+        expect(result.body.paging.total_item).toBe(15);
     });
 
     it('should can search using name', async () => {
@@ -534,10 +534,48 @@ describe('SEARCH /api/contacts', () => {
         logger.info(result.body);
 
         expect(result.status).toBe(200);
-        expect(result.body.data.length).toBe(10);
-        expect(result.body.pagging.page).toBe(1);
-        expect(result.body.pagging.total_page).toBe(2);
-        expect(result.body.pagging.total_item).toBe(15);
+        expect(result.body.data.length).toBe(1);
+        expect(result.body.paging.page).toBe(1);
+        expect(result.body.paging.total_page).toBe(1);
+        expect(result.body.paging.total_item).toBe(1);
+    });
+
+    it('should can search using email', async () => {
+        const result = await supertest(web)
+            .get('/api/contacts/')
+            .query(
+                {
+                    email: 'test13'
+                }
+            )
+            .set('Authorization', 'test')
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(200);
+        expect(result.body.data.length).toBe(1);
+        expect(result.body.paging.page).toBe(1);
+        expect(result.body.paging.total_page).toBe(1);
+        expect(result.body.paging.total_item).toBe(1);
+    });
+
+    it('should can search using phone', async () => {
+        const result = await supertest(web)
+            .get('/api/contacts/')
+            .query(
+                {
+                    phone: '1234568902'
+                }
+            )
+            .set('Authorization', 'test')
+
+        logger.info(result.body);
+
+        expect(result.status).toBe(200);
+        expect(result.body.data.length).toBe(1);
+        expect(result.body.paging.page).toBe(1);
+        expect(result.body.paging.total_page).toBe(1);
+        expect(result.body.paging.total_item).toBe(1);
     });
 
 });

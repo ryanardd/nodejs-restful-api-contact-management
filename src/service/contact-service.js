@@ -125,7 +125,7 @@ const remove = async (user, request) => {
 const search = async (user, request) => {
 
     // lakukan validation
-    request = await validate(searchContactValidation, request);
+    request = validate(searchContactValidation, request);
 
     // jika page 1, ((page - 1)*size) = 0
     // jika page 2, ((page - 1)*size) = 10
@@ -137,10 +137,10 @@ const search = async (user, request) => {
     // filter harus memiliki user
 
     filters.push({
-        username_id: user.username_id
+        username_id: user.username
     })
 
-    if (filters.name) {
+    if (request.name) {
         filters.push({
             OR: [
                 {
@@ -156,14 +156,16 @@ const search = async (user, request) => {
             ]
         })
     }
-    if (filters.email) {
+    if (request.email) {
         filters.push({
-            email: {
-                contains: request.email
+            AND: {
+                email: {
+                    contains: request.email
+                }
             }
         })
     }
-    if (filters.phone) {
+    if (request.phone) {
         filters.push({
             phone: {
                 contains: request.phone
@@ -190,7 +192,7 @@ const search = async (user, request) => {
     // jika ada maka kembalikan
     return {
         data: contacts,
-        pagging: {
+        paging: {
             page: request.page,
             total_item: totalItems,
             total_page: Math.ceil(totalItems / request.size)
