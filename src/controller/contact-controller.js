@@ -71,9 +71,33 @@ const remove = async (req, res, next) => {
 
 }
 
+const search = async (req, res, next) => {
+
+    try {
+        const user = req.user // get of middleware
+        const request = {
+            name: req.query.name,
+            email: req.query.email,
+            phone: req.query.phone,
+            page: req.query.page,
+            size: req.query.size
+        }
+
+        const result = await contactService.search(user, request);
+        res.status(200).json({
+            data: result.data,
+            pagging: result.pagging
+        })
+    } catch (error) {
+        next(error)
+    }
+
+}
+
 export default {
     create,
     get,
     update,
-    remove
+    remove,
+    search
 }

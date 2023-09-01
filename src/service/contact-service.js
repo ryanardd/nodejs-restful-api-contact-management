@@ -1,4 +1,4 @@
-import { createContactValidation, getContactValidation, updateContactValidation } from "../validation/contact-validation";
+import { createContactValidation, getContactValidation, searchContactValidation, updateContactValidation } from "../validation/contact-validation";
 import { validate } from "../validation/validation";
 import { prismaClient } from "../application/database";
 import { ResponseError } from "../error/response-error";
@@ -122,9 +122,86 @@ const remove = async (user, request) => {
 
 }
 
+const search = async (user, request) => {
+
+    // lakukan validation
+    request = await validate(searchContactValidation, request);
+
+    // jika page 1, ((page - 1)*size) = 0
+    // jika page 2, ((page - 1)*size) = 10
+    const skip = (request.page - 1) * request.size;
+
+    // untuk memfilter request pencarian
+    const filters = []
+
+    // filter harus memiliki user
+
+    filters.push({
+        username_id: user.username_id
+    })
+
+    if (filters.name) {
+        filters.push({
+            OR: [
+                {
+                    first_name: {
+                        contains: request.name
+                    }
+                },
+                {
+                    last_name: {
+                        contains: request.name
+                    }
+                }
+            ]
+        })
+    }
+    if (filters.email) {
+        filters.push({
+            email: {
+                contains: request.email
+            }
+        })
+    }
+    if (filters.phone) {
+        filters.push({
+            phone: {
+                contains: request.phone
+            }
+        })
+    }
+
+    // skenario pencarian
+    const contacts = await prismaClient.contact.findMany({
+        where: {
+            AND: filters
+        },
+        take: request.size,
+        skip: skip
+    });
+
+    // cek data di db
+    const totalItems = await prismaClient.contact.count({
+        where: {
+            AND: filters
+        }
+    });
+
+    // jika ada maka kembalikan
+    return {
+        data: contacts,
+        pagging: {
+            page: request.page,
+            total_item: totalItems,
+            total_page: Math.ceil(totalItems / request.size)
+        }
+    }
+}
+
 export default {
     create,
     get,
     update,
-    remove
+    remove,
+    search
 }
