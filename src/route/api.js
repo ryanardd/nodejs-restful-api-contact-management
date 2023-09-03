@@ -2,6 +2,7 @@ import express from "express";
 import userController from "../controller/user-controller";
 import contactController from "../controller/contact-controller";
 import { authMiddleware } from "../middleware/auth-middleware";
+import addressController from "../controller/address-controller";
 
 /**
  * api untuk yang sudah ada user
@@ -22,6 +23,9 @@ userRouter.get('/api/contacts/:contactId', contactController.get);
 userRouter.put('/api/contacts/:contactId', contactController.update);
 userRouter.delete('/api/contacts/:contactId', contactController.remove);
 userRouter.get('/api/contacts/', contactController.search);
+
+// Address API
+userRouter.post('/api/contacts/:contactId/addresses', addressController.create);
 
 export {
     userRouter
