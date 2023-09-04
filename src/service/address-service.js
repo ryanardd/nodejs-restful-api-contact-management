@@ -1,4 +1,4 @@
-import { createAddressValidation, getAddressValidation } from "../validation/address-validation";
+import { createAddressValidation, getAddressValidation, updateAddressValidation } from "../validation/address-validation";
 import { getContactValidation } from "../validation/contact-validation";
 import { validate } from "../validation/validation";
 import { prismaClient } from "../application/database";
@@ -88,7 +88,62 @@ const get = async (user, contactId, addressId) => {
     return address;
 }
 
+const update = async (user, contactId, address) => {
+    // lakukan validation contact id
+    contactId = validate(getContactValidation, contactId);
+
+    // cek database contact id
+    const countTotalContact = await prismaClient.contact.count({
+        where: {
+            username_id: user.username
+        }
+    });
+
+    if (countTotalContact !== 1) {
+        throw new ResponseError(404, 'contact id is not found');
+    }
+
+    // lakukan validation address update
+    address = validate(updateAddressValidation, address);
+
+    // cek database address
+    const countTotalAddress = await prismaClient.address.count({
+        where: {
+            contact_id: contactId,
+            id: address.id
+        }
+    });
+
+    if (countTotalAddress !== 1) {
+        throw new ResponseError(404, 'address id is not found');
+    }
+
+    // jika ada data address maka kembalikan
+    return prismaClient.address.update({
+        where: {
+            id: address.id
+        },
+        data: {
+            street: address.street,
+            city: address.city,
+            province: address.province,
+            country: address.country,
+            postal_code: address.postal_code
+        },
+        select: {
+            id: true,
+            street: true,
+            city: true,
+            province: true,
+            country: true,
+            postal_code: true
+        }
+    })
+
+}
+
 export default {
     create,
-    get
+    get,
+    update
 }
