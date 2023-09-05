@@ -74,9 +74,27 @@ const remove = async (req, res, next) => {
 
 }
 
+// untuk mendapatkan list address berdasarkan kontak yang kita pilih
+const list = async (req, res, next) => {
+    try {
+
+        const user = req.user;
+        const contactId = req.params.contactId;
+
+        const result = await addressService.list(user, contactId);
+        res.status(200).json({
+            data: result
+        })
+
+    } catch (error) {
+        next(error);
+    }
+}
+
 export default {
     create,
     get,
     update,
-    remove
+    remove,
+    list
 }

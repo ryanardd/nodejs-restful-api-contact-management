@@ -8,7 +8,7 @@ const create = async (user, contactId, request) => {
     // lakukan validation data contact
     contactId = validate(getContactValidation, contactId);
 
-    // check to database data id contact
+    // cek database contact id pastikan datanya ada
     const countTotalContact = await prismaClient.contact.count({
         where: {
             username_id: user.username,
@@ -47,10 +47,11 @@ const get = async (user, contactId, addressId) => {
     // lakukan validation data contact
     contactId = validate(getContactValidation, contactId);
 
-    // cek db contact id
+    // cek database contact id pastikan datanya ada
     const countTotalContact = await prismaClient.contact.count({
         where: {
-            username_id: user.username
+            username_id: user.username,
+            id: contactId
         }
     });
 
@@ -92,10 +93,11 @@ const update = async (user, contactId, address) => {
     // lakukan validation contact id
     contactId = validate(getContactValidation, contactId);
 
-    // cek database contact id
+    // cek database contact id pastikan datanya ada
     const countTotalContact = await prismaClient.contact.count({
         where: {
-            username_id: user.username
+            username_id: user.username,
+            id: contactId
         }
     });
 
@@ -106,7 +108,7 @@ const update = async (user, contactId, address) => {
     // lakukan validation address update
     address = validate(updateAddressValidation, address);
 
-    // cek database address
+    // cek database address pastikan data ada
     const countTotalAddress = await prismaClient.address.count({
         where: {
             contact_id: contactId,
@@ -149,7 +151,8 @@ const remove = async (user, contactId, addressId) => {
     // pastikan data di db
     const countTotalContact = await prismaClient.contact.count({
         where: {
-            username_id: user.username
+            username_id: user.username,
+            id: contactId
         }
     });
 
@@ -182,9 +185,41 @@ const remove = async (user, contactId, addressId) => {
     });
 }
 
+// untuk mendapatkan list address berdasarkan kontak yang kita pilih
+const list = async (user, contactId) => {
+    contactId = validate(getContactValidation, contactId);
+
+    // cek database contact id pastikan datanya ada
+    const countTotalContact = await prismaClient.contact.count({
+        where: {
+            username_id: user.username,
+            id: contactId
+        }
+    });
+
+    if (countTotalContact !== 1) {
+        throw new ResponseError(404, 'contact is not found');
+    }
+
+    return prismaClient.address.findMany({
+        where: {
+            contact_id: contactId
+        },
+        select: {
+            id: true,
+            street: true,
+            city: true,
+            province: true,
+            country: true,
+            postal_code: true,
+        }
+    })
+}
+
 export default {
     create,
     get,
     update,
-    remove
+    remove,
+    list
 }
