@@ -173,6 +173,8 @@ describe('PUT /api/contacts/:contactId/addresses/:addressId', () => {
                 postal_code: 'postalcode'
             })
 
+        logger.info(result.body)
+
         expect(result.status).toBe(404);
     });
 
@@ -211,4 +213,63 @@ describe('PUT /api/contacts/:contactId/addresses/:addressId', () => {
 
         expect(result.status).toBe(400);
     });
+});
+
+describe('DELETE /api/contacts/:contactId/addresses/:addressId', () => {
+
+    beforeEach(async () => {
+        await createTestUser();
+        await createTestContact();
+        await createTestAddress();
+    });
+
+    afterEach(async () => {
+        await removeAllTestAddress();
+        await removeAllTestContact();
+        await removeTestUser();
+    });
+
+    it('should can delete data', async () => {
+        const testContact = await getTestContact();
+        let testAddress = await getTestAddress();
+
+        const result = await supertest(web)
+            .delete('/api/contacts/' + testContact.id + '/addresses/' + testAddress.id)
+            .set('Authorization', 'test')
+
+        logger.info(result.body)
+
+        expect(result.status).toBe(200);
+        expect(result.body.data).toBe("OK");
+
+        testAddress = await getTestAddress();
+        expect(testAddress).toBeNull();
+    });
+
+    it('should reject if contact id delete invalid', async () => {
+        const testContact = await getTestContact();
+        let testAddress = await getTestAddress();
+
+        const result = await supertest(web)
+            .delete('/api/contacts/' + (testContact.id + 1023023) + '/addresses/' + testAddress.id)
+            .set('Authorization', 'test')
+
+        logger.info(result.body)
+
+        expect(result.status).toBe(404);
+    });
+
+    it('should reject if address id delete invalid', async () => {
+        const testContact = await getTestContact();
+        let testAddress = await getTestAddress();
+
+        const result = await supertest(web)
+            .delete('/api/contacts/' + testContact.id + '/addresses/' + (testAddress.id + 1))
+            .set('Authorization', 'test')
+
+        logger.info(result.body)
+
+        expect(result.status).toBe(404);
+    });
+
 });
